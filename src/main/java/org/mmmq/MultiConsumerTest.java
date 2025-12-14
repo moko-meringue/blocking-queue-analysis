@@ -1,6 +1,9 @@
 package org.mmmq;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class MultiConsumerTest {
 
@@ -32,16 +35,8 @@ class MultiConsumerTest {
             consumerPool.submit(() -> {
                 try {
                     startLatch.await();
-                    while (true) {
-                        if (endLatch.getCount() == 0) {
-                            break;
-                        }
-                        if (queue.poll(2, TimeUnit.SECONDS) == null) {
-                            if (endLatch.getCount() == 0) {
-                                break;
-                            }
-                            continue;
-                        }
+                    while (endLatch.getCount() > 0) {
+                        queue.take();
                         endLatch.countDown();
                     }
                 } catch (InterruptedException e) {
