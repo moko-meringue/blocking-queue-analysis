@@ -9,11 +9,14 @@ public class Main {
      * 캐시 히트, gc등으로 인한 변인을 통제하기 위해 각 테스트는 주석을 해제하고 개별적으로 실행해야 한다.
      */
     public static void main(final String[] args) {
-//        단일_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다();
-//        단일_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다();
+        int producerSize = 200;
+        int messagesPerProducer = 100_000;
+        int consumerSize = 200;
+//        단일_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다(producerSize, messagesPerProducer);
+//        단일_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다(producerSize, messagesPerProducer);
 //
-//        다중_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다();
-//        다중_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다();
+//        다중_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다(producerSize, messagesPerProducer, consumerSize);
+//        다중_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다(producerSize, messagesPerProducer, consumerSize);
     }
 
     /**
@@ -31,10 +34,10 @@ public class Main {
      * <p>평균 소요 시간: <strong>875.4 ms</strong></p>
      * <p>처리율: <strong>약 22,846,755 건/초</strong></p>
      */
-    static void 단일_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다() {
+    static void 단일_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다(int producerSize, int messagesPerProducer) {
         SingleConsumerTest singleConsumerTest = new SingleConsumerTest();
-        ArrayBlockingQueue<Message> arrayBlockingQueue = new ArrayBlockingQueue<>(20_000_000);
-        long result = singleConsumerTest.test(arrayBlockingQueue, 200, 100_000);
+        ArrayBlockingQueue<Message> arrayBlockingQueue = new ArrayBlockingQueue<>(producerSize * messagesPerProducer);
+        long result = singleConsumerTest.test(arrayBlockingQueue, producerSize, messagesPerProducer);
         System.out.println("단일 Consumer ArrayBlockingQueue 처리 시간: " + result + " ms");
     }
 
@@ -52,10 +55,10 @@ public class Main {
      * <p>평균 소요 시간: <strong>1,315.4 ms</strong></p>
      * <p>처리율: <strong>약 15,204,500 건/초</strong></p>
      */
-    static void 단일_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다() {
+    static void 단일_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다(int producerSize, int messagesPerProducer) {
         SingleConsumerTest singleConsumerTest = new SingleConsumerTest();
         LinkedBlockingQueue<Message> linkedBlockingQueue = new LinkedBlockingQueue<>();
-        long result = singleConsumerTest.test(linkedBlockingQueue, 200, 100_000);
+        long result = singleConsumerTest.test(linkedBlockingQueue, producerSize, messagesPerProducer);
         System.out.println("단일 Consumer LinkedBlockingQueue 처리 시간: " + result + " ms");
     }
 
@@ -74,10 +77,14 @@ public class Main {
      * <p>평균 소요 시간: <strong>1,287.2 ms</strong></p>
      * <p>처리율: <strong>약 15,537,508.9 건/초</strong></p>
      */
-    static void 다중_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다() {
+    static void 다중_Consumer_환경에서_ArrayBlockingQueue_성능을_측정한다(
+            int producerSize,
+            int messagesPerProducer,
+            int consumerSize
+    ) {
         MultiConsumerTest multiConsumerTest = new MultiConsumerTest();
-        ArrayBlockingQueue<Message> arrayBlockingQueue = new ArrayBlockingQueue<>(20_000_000);
-        long result = multiConsumerTest.test(arrayBlockingQueue, 200, 100_000, 200);
+        ArrayBlockingQueue<Message> arrayBlockingQueue = new ArrayBlockingQueue<>(producerSize * messagesPerProducer);
+        long result = multiConsumerTest.test(arrayBlockingQueue, producerSize, messagesPerProducer, consumerSize);
         System.out.println("다중 Consumer ArrayBlockingQueue 처리 시간: " + result + " ms");
     }
 
@@ -95,10 +102,14 @@ public class Main {
      * <p>평균 소요 시간: <strong>1020 ms</strong></p>
      * <p>처리율: <strong>약 19,603,999.2 건/초</strong></p>
      */
-    static void 다중_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다() {
+    static void 다중_Consumer_환경에서_LinkedBlockingQueue_성능을_측정한다(
+            int producerSize,
+            int messagesPerProducer,
+            int consumerSize
+    ) {
         MultiConsumerTest multiConsumerTest = new MultiConsumerTest();
         LinkedBlockingQueue<Message> linkedBlockingQueue = new LinkedBlockingQueue<>();
-        long result = multiConsumerTest.test(linkedBlockingQueue, 200, 100_000, 200);
+        long result = multiConsumerTest.test(linkedBlockingQueue, producerSize, messagesPerProducer, consumerSize);
         System.out.println("다중 Consumer LinkedBlockingQueue 처리 시간: " + result + " ms");
     }
 }
