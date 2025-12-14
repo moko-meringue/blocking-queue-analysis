@@ -6,7 +6,7 @@
 
 ### 가설
 
-`LinkedBlockingQueue`는 소비 락(takeLock)과 삽입 락(putLock)이 분리되어 있어, 단일 락을 사용하는 `ArrayBlockingQueue`보다 높은 동시성 성능을 보일 것이다.
+`LinkedBlockingQueue`는 생산 락(putLock)과 소비 락(takeLock)이 분리되어 있어, 단일 락을 사용하는 `ArrayBlockingQueue`보다 높은 동시성 성능을 보일 것이다.
 
 ### 목표
 
@@ -82,14 +82,14 @@
 
 ### 💡 핵심 발견
 
-> "`LinkedBlockingQueue`는 소비 락(takeLock)과 삽입 락(putLock)이 분리되어 있어, 단일 락을 사용하는 `ArrayBlockingQueue`보다 높은 동시성 성능을 보일 것" 이라는
+> "`LinkedBlockingQueue`는 생산 락(putLock)과 소비 락(takeLock)이 분리되어 있어, 단일 락을 사용하는 `ArrayBlockingQueue`보다 높은 동시성 성능을 보일 것" 이라는
 > 가설은 **거짓**이다.
 >
 > 성능은 **[락 경합 비용]** vs **[cpu 캐시 미스 비용]** 의 관점에서 결정된다.
 
 ### 4-1. 왜 단일 소비자 상황에서는 `ArrayBlockingQueue`가 더 빠른가?
 
-생산자 스레드가 많더라도 소비자 스레드가 하나뿐인 상황에서는 소비/삽입 락 분리의 이점이 크지 않다.
+생산자 스레드가 많더라도 소비자 스레드가 하나뿐인 상황에서는 소비/생산 락 분리의 이점이 크지 않다.
 
 오히려 `LinkedBlockingQueue`가 가진 구조적 비용이 성능 저하의 주원인이 된다.
 
@@ -102,7 +102,7 @@
 생산자와 소비자가 모두 많아지면(400개 스레드), `ArrayBlockingQueue`의 단일 락으로 인한 경합 비용이 메모리 비용보다 훨씬 더 큰 문제가 된다.
 
 1. **단일 락의 한계:** `ArrayBlockingQueue`는 삽입/소비 작업 시, 하나의 락을 공유한다. <br> 수백 개의 스레드가 하나의 락을 두고 경쟁하기 때문에, 대기 시간이 길어진다.
-2. **소비 락과 삽입 락 분리의 장점:** `LinkedBlockingQueue`는 소비 락(takeLock)과 삽입 락(putLock)이 분리되어 있어, 삽입과 추출이 동시에 일어날 수 있다. <br> 극심한
+2. **소비 락과 생산 락 분리의 장점:** `LinkedBlockingQueue`는 생산 락(putLock)과 소비 락(takeLock)이 분리되어 있어, 삽입과 추출이 동시에 일어날 수 있다. <br> 극심한
    경합 상황에서는 **캐시 미스 비용** 을 지불하더라도, 동시성 처리량을 늘리는 것이 전체 성능에 더 유리하다.
 
 <br>
