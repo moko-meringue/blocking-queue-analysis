@@ -52,7 +52,7 @@ for i in "${!CORES[@]}"; do
           -p capacityPercent=${PERCENT} \
           -gc true \
           -prof gc \
-          -prof "perfnorm:events=instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses" \
+          -prof "perfnorm:events=instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses,mem_load_l3_hit_retired.xsnp_hitm,mem_load_l3_hit_retired.xsnp_hit" \
           -prof jfr:dir=${RESULT_DIR} \
           -prof stack \
           -rf json -rff ${RESULT_DIR}/${JSON_NAME}
